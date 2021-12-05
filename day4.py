@@ -39,8 +39,7 @@ def get_sum_unmarked(board):
 
 
 #### SERIALIZATION ################
-sys.stdin = open("input.txt", 'r')
-lines = [line.strip() for line in sys.stdin.readlines()]
+lines = [line.strip() for line in open("input.txt", 'r').readlines()]
 
 balls = [int(x) for x in lines[0].split(",")]
 boards = []
