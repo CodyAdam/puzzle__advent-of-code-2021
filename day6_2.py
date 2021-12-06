@@ -10,7 +10,6 @@ for x in states:
     sliding_window[x] += 1
 print(sliding_window)
 
-to_add = 0
 for day in range(days):
     if sliding_window[0]:
         sliding_window[8 + 1] += sliding_window[0]
