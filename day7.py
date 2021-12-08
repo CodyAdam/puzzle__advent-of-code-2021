@@ -1,5 +1,3 @@
-import sys
-
 lines = [line.strip() for line in open("input.txt", 'r').readlines()]
 
 states = [int(x) for x in lines[0].split(',')]
