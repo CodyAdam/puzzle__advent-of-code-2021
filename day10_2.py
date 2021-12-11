@@ -14,13 +14,6 @@ def get_oposite(char):
     exit()
 
 
-score_table_corrupt = {
-    ")": 3,
-    "]": 57,
-    "}": 1197,
-    ">": 25137,
-}
-
 score_table = {
     "(": 1,
     "[": 2,
