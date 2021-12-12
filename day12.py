@@ -7,15 +7,14 @@ graph = {}
 # Build the graph
 for line in lines:
     left, right = line.split("-")
-    if left in graph:
-        graph[left].add(right)
-    else:
-        graph[left] = set([right])
 
-    if right in graph:
-        graph[right].add(left)
-    else:
-        graph[right] = set([left])
+    if left not in graph:
+        graph[left] = set()
+    if right not in graph:
+        graph[right] = set()
+
+    graph[left].add(right)
+    graph[right].add(left)
 
 
 # Depth first search algo
