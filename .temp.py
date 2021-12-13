@@ -1,3 +1,2 @@
-
-    for neighbour in graph[cur]:
-        dfs(prev, neighbour)
+ # if instructions == 1:
+        #     break
