@@ -101,6 +101,6 @@ for c in bin_line:
 
 while len(buffer):
     value, bit_count = read_packet(buffer)
-print(ver_tot)
+    print(value)
 
-# 1h 40
+# 1h 50
