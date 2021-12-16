@@ -19,3 +19,4 @@ Advent of Code is an Advent calendar of small programming puzzles for a variety 
 | 13  | 24 min      | 🌗🌑🌑        |
 | 14  | 40 min      | 🌖🌑🌑        |
 | 15  | 1 h 33      | 🌕🌗🌑        |
+| 16  | 1 h 50      | 🌕🌘🌑        |

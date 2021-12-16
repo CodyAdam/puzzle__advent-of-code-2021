@@ -1,9 +1,11 @@
 from collections import defaultdict, deque
+from line_profiler import LineProfiler
 
-lines = [line.strip() for line in open("input.txt", 'r').readlines()]
-grid = [[int(c) for c in line] for line in lines]
+lines = [[int(c) for c in line.strip()]
+         for line in open("input.txt", 'r').readlines()]
+
 graph = defaultdict(lambda: set())
-W, H = len(grid[0]), len(grid)
+W, H = len(lines[0]), len(lines)
 
 for y in range(H):
     for x in range(W):
@@ -17,43 +19,28 @@ for y in range(H):
             graph[(x, y)].add((x, y - 1))
 
 
-def show_mins():
-    for y in range(H):
-        for x in range(W):
-            if mins[(x, y)] < 10:
-                print(" ", end="")
-            print(mins[(x, y)], end=" ")
-        print()
+def main():
+    dist = defaultdict(lambda: 9999)
+    dist[(0, 0)] = 0
+    q = set()
+    for node in graph:
+        q.add(node)
+
+    while len(q):
+        pos = min(q, key=lambda pos: dist[pos])
+        q.remove(pos)
+
+        for n in graph[pos]:
+            if n in q:
+                temp = dist[pos] + lines[n[1]][n[0]]
+                if dist[n] > temp:
+                    dist[n] = temp
+
+    print(dist[(H - 1, W - 1)])
 
 
-def make_min(x, y):
-    pos = (x, y)
-    neigh = graph[pos]
-    mins[pos] = min([mins[p] for p in neigh]) + grid[y][x]
-
-    for ne_pos in neigh:
-        if mins[ne_pos] > mins[pos] + grid[ne_pos[1]][ne_pos[0]]:
-            mins[ne_pos] = mins[pos] + grid[ne_pos[1]][ne_pos[0]]
-
-
-START = (0, 0)
-END = (H - 1, W - 1)
-mins = defaultdict(lambda: 9999)
-mins[START] = 0
-cur_ver = (1, 0)
-cur_hor = (0, 1)
-
-while cur_ver[0] != W and cur_hor[1] != H:
-    if cur_ver == cur_hor:
-        make_min(cur_hor[0], cur_hor[1])
-        cur_ver = (cur_ver[0] + 1, 0)
-        cur_hor = (0, cur_hor[1] + 1)
-    else:
-        make_min(cur_hor[0], cur_hor[1])
-        make_min(cur_ver[0], cur_ver[1])
-        cur_ver = (cur_ver[0], cur_ver[1] + 1)
-        cur_hor = (cur_hor[0] + 1, cur_hor[1])
-
-print(mins[END])
-
+profile = LineProfiler()
+profile.add_function(main)
+profile.runcall(main)
+profile.print_stats()
 # 1 h 20
