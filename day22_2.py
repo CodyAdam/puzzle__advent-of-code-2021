@@ -13,7 +13,7 @@ def parse(file):
 
 
 def get_bound(string):
-    x, z, y = string.split(",")
+    x, y, z = string.split(",")
     x = [int(n) for n in x[2:].split('..')]
     y = [int(n) for n in y[2:].split('..')]
     z = [int(n) for n in z[2:].split('..')]
@@ -33,18 +33,6 @@ def get_points_from_bound(bound):
     return (p1, p2, p3, p4, p5, p6, p7, p8)
 
 
-def get_opposite_delta(i):
-    p1 = (1, 1, 1)
-    p2 = (1, 1, -1)
-    p3 = (1, -1, 1)
-    p4 = (1, -1, -1)
-    p5 = (-1, 1, 1)
-    p6 = (-1, 1, -1)
-    p7 = (-1, -1, 1)
-    p8 = (-1, -1, -1)
-    return (p1, p2, p3, p4, p5, p6, p7, p8)[i]
-
-
 def cube_from_oppo(p1, p2):
     x, y, z = p1
     x2, y2, z2 = p2
@@ -62,69 +50,33 @@ class Cube:
 
     def area(self):
         x, y, z = self.bound
-        x = x[1] - x[0] + 1
-        y = y[1] - y[0] + 1
-        z = z[1] - z[0] + 1
+        x = abs(x[1] - x[0] + 1)
+        y = abs(y[1] - y[0] + 1)
+        z = abs(z[1] - z[0] + 1)
         return x * y * z * (1 if self.positive else -1)
 
-    def is_point_inside(self, point):
-        x, y, z = self.bound
-        xp, yp, zp = point
-        in_x = xp >= x[0] and xp <= x[1]
-        in_y = yp >= y[0] and yp <= y[1]
-        in_z = zp >= z[0] and zp <= z[1]
-        return in_z and in_x and in_y
-
     def is_intersecting(self, other):
-        for point in self.points:
-            if other.is_point_inside(point):
-                return True
-        for point in other.points:
-            if self.is_point_inside(point):
-                return True
-        return False
+        x1, y1, z1 = self.bound
+        x2, y2, z2 = other.bound
+
+        return x1[0] < x2[1] and x1[1] > x2[0] and y1[0] < y2[1] and y1[
+            1] > y2[0] and z1[0] < z2[1] and z1[1] > z2[0]
 
     def get_intersection(self, other):
-        for point in self.points:
-            if other.is_point_inside(point):
-                return other.get_intersection_from_point(point, self)
-        for point in other.points:
-            if self.is_point_inside(point):
-                return self.get_intersection_from_point(point, other)
-        return False
+        x1, y1, z1 = self.bound
+        x2, y2, z2 = other.bound
 
-    def get_intersection_from_point(self, point, other):
-        i = other.points.index(point)
-        dx, dy, dz = get_opposite_delta(i)
-        done = [False, False, False]
-        x, y, z = point
-        while not all(done):
-            if not done[0]:
-                new_coords = (x + dx, y, z)
-                if self.is_point_inside(new_coords) and other.is_point_inside(
-                        new_coords):
-                    x += dx
-                else:
-                    done[0] = True
+        min_x = max(x1[0], x2[0])
+        min_y = max(y1[0], y2[0])
+        min_z = max(z1[0], z2[0])
 
-            if not done[1]:
-                new_coords = (x, y + dy, z)
-                if self.is_point_inside(new_coords) and other.is_point_inside(
-                        new_coords):
-                    y += dy
-                else:
-                    done[1] = True
+        max_x = min(x1[1], x2[1])
+        max_y = min(y1[1], y2[1])
+        max_z = min(z1[1], z2[1])
 
-            if not done[2]:
-                new_coords = (x, y, z + dz)
-                if self.is_point_inside(new_coords) and other.is_point_inside(
-                        new_coords):
-                    z += dz
-                else:
-                    done[2] = True
-        point2 = (x, y, z)
-
-        return cube_from_oppo(point, point2)
+        p1 = (min_x, min_y, min_z)
+        p2 = (max_x, max_y, max_z)
+        return cube_from_oppo(p1, p2)
 
     def __str__(self) -> str:
         return f"{self.bound} -> {self.area()}"
@@ -143,14 +95,11 @@ for index, line in enumerate(data):
     for c in cubes:
         c: Cube
         if c.is_intersecting(cube):
-            neg = c.get_intersection(cube)
-            neg.positive = mode == "off"
-            to_add.append(neg)
+            inter = c.get_intersection(cube)
+            inter.positive = not c.positive
+            to_add.append(inter)
     for c in to_add:
         cubes.add(c)
-    if mode == "on":
+    if cube.positive:
         cubes.add(cube)
 print(sum([c.area() for c in cubes]))
-
-# out 43493252170964537
-# exp  2758514936282235
