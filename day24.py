@@ -204,7 +204,7 @@ def inputs(start):
     inp = start
     while inp:
         yield inp
-        inp = get_next_up(inp)
+        inp = get_next_down(inp)
 
 
 outs = []
@@ -236,7 +236,7 @@ def brute_force(start):
             print(inp)
 
 
-brute_force([int(c) for c in str(maxi)])
+brute_force([9 for c in str(maxi)])
 
 # while True:
 #     np = deque([int(c) for c in input().strip()])
